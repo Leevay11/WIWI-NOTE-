@@ -72,9 +72,12 @@
     .footer { margin: 19px 0 0; color: #907c8e; font-size: 10px; }
     .result { animation: arrive 450ms cubic-bezier(.2,.8,.2,1) both; }
     .result .stamp { animation: bob 2s ease-in-out infinite; }
-    .music { display: flex; align-items: center; justify-content: center; gap: 9px; margin: 22px 0 0; color: #725f78; font-size: 12px; }
+    .music { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 9px 12px; margin: 22px 0 0; color: #725f78; font-size: 12px; }
     .music-button { min-width: 110px; min-height: 36px; padding: 0 14px; color: #553852; border: 1px solid #ead7e2; background: #fff; font-size: 12px; }
     .music-button:hover { background: #fff2f6; }
+    .volume-control { display: inline-flex; align-items: center; gap: 7px; color: #725f78; font-size: 11px; }
+    .volume-control input { width: 92px; accent-color: var(--pink); cursor: pointer; }
+    .volume-control output { min-width: 31px; color: #806d83; font-variant-numeric: tabular-nums; text-align: right; }
     @keyframes intro-arrive { from { opacity: 0; transform: translateY(22px) scale(.94); } to { opacity: 1; transform: translateY(0) scale(1); } }
     @keyframes intro-out { to { opacity: 0; transform: translateY(-14px) scale(.96); filter: blur(5px); } }
     @keyframes card-reveal { from { opacity: 0; transform: translateY(24px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
@@ -97,9 +100,9 @@
   <main class="card" id="card" aria-live="polite" aria-hidden="true">
     <div id="questionStage">
       <div class="stamp" aria-hidden="true">💌</div>
-      <p class="eyebrow" id="eyebrow">A few honest questions for Wissal</p>
-      <h1 id="question">Do you ever miss me?</h1>
-      <p class="message" id="message">No pressure to say anything you don’t mean. Pick what feels true. 💛</p>
+      <p class="eyebrow" id="eyebrow">A favorite memory for Wissal</p>
+      <h1 id="question">Do you remember our first date?</h1>
+      <p class="message" id="message">9/08/2026 — Spider-Man: Brand New Day at the cinema. My favorite day ever, and the day I fell deeply in love with you. 💛</p>
       <div class="progress" id="progress" aria-label="Question progress"></div>
       <div class="actions" id="actions">
         <button class="yes" data-answer="yes" type="button">Yeah, I do 💛</button>
@@ -110,6 +113,11 @@
     <div class="music">
       <span id="musicLabel">♫ Ethereal</span>
       <button class="music-button" id="musicToggle" type="button" aria-label="Pause background music">Pause ♪</button>
+      <label class="volume-control" for="musicVolume">
+        <span>Volume</span>
+        <input id="musicVolume" type="range" min="0" max="100" value="25" aria-label="Music volume">
+        <output id="volumeValue" for="musicVolume">25%</output>
+      </label>
     </div>
     <p class="footer">with care, Leevay 💛</p>
   </main>
@@ -121,7 +129,15 @@
     const musicToggle = document.querySelector('#musicToggle');
     const musicLabel = document.querySelector('#musicLabel');
     const musicStatus = document.querySelector('#musicStatus');
+    const volumeSlider = document.querySelector('#musicVolume');
+    const volumeValue = document.querySelector('#volumeValue');
     const questionStage = document.querySelector('#questionStage');
+    music.volume = Number(volumeSlider.value) / 100;
+    volumeSlider.addEventListener('input', () => {
+      music.volume = Number(volumeSlider.value) / 100;
+      volumeValue.value = `${volumeSlider.value}%`;
+      volumeValue.textContent = `${volumeSlider.value}%`;
+    });
 
     function setMusicState(isPlaying) {
       musicToggle.textContent = isPlaying ? 'Pause ♪' : 'Play ♪';
@@ -154,6 +170,7 @@
     });
 
     const questions = [
+      { text: 'Do you remember our first date?', note: '9/08/2026 — Spider-Man: Brand New Day at the cinema. My favorite day ever, and the day I fell deeply in love with you. 💛' },
       { text: 'Do you ever miss me?', note: 'The little moments count too. 🌷' },
       { text: 'Do you still have love for me?', note: 'Whatever your answer, thank you for being honest.' },
       { text: 'Do you ever think about us?', note: 'No wrong answers. No surprise follow-up exam. 🙂' },
